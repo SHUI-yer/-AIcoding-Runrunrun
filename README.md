@@ -90,3 +90,4 @@ Alcoding-Runrunrun/
   > **b站视频**：[牛客网页小游戏AIcoding训练——基于AI开发的纯html2D跑酷小游戏](https://www.bilibili.com/video/BV1nHFMz3Epu/)  
   > **游戏在线版体验**：[牛客娘2D跑酷](http://www.silencer76.com/nowcoderRunrunrun/)  
   > **牛客帖子**:  [牛客帖子](https://www.nowcoder.com/discuss/847913855530307584)  
+  > **邮箱**：Chi_sy@outlook.com
