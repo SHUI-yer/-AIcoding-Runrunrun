@@ -46,16 +46,23 @@
    * 响应式布局：使用 CSS clamp() 和 min()/max() 适配桌面端与移动端屏幕。
   ---
   ## 项目结构
-  ```text
-  项目根目录/
-  ├── index.html          (主文件)
-  ├── bg.png              (背景图)
-  ├── player.png          (玩家图)
-  ├── js/                 (脚本文件夹)
-  │   ├── config.js       (配置)
-  │   ├── state.js        (状态)
-  │   └── main.js         (主逻辑)
-  └── assets/             (资源文件夹)
+ ```text
+Alcoding-Runrunrun/
+├── index.html          # 主文件
+├── bg.png              # 背景图
+├── player.png          # 玩家图
+├── start.png           # 开始界面图
+├── success.png         # 成功界面图
+├── fail.png            # 失败界面图
+├── obs1.png            # 障碍图 1
+├── obs2.png            # 障碍图 2
+├── obs3.png            # 障碍图 3
+└── js/                 # 脚本目录
+    ├── config.js       # 游戏配置与常量
+    ├── state.js        # 游戏状态、变量与图片预加载
+    ├── logic.js        # 核心游戏逻辑：玩家、障碍、红旗、碰撞检测
+    ├── render.js       # 渲染与 UI 更新
+    └── main.js         # 初始化、事件绑定与游戏循环
   ```
   ---
   ## 项目发展期望  
