@@ -1,0 +1,12 @@
+# OS metadata
+Thumbs.db
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Trae/AI logs
+.trae/
