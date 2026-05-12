@@ -86,7 +86,7 @@
             gap: 20px;
         }
         /* 规则界面深色背景 */
-        #rulesScreen, #levelSelectScreen {
+        #rulesScreen {
             display: none;
             background: rgba(20, 20, 20, 0.95);
         }
@@ -94,47 +94,6 @@
         #gameOverScreen { display: none; background: url('fail.png') no-repeat center/cover; }
         #levelCompleteScreen { display: none; background: url('success.png') no-repeat center/cover; }
         #levelStartScreen { display: none; }
-
-        /* 关卡列表样式 */
-        .level-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            width: 100%;
-            max-width: 500px;
-            margin-top: 20px;
-        }
-        .level-item {
-            aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-        .level-item.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: rgba(0, 0, 0, 0.5);
-        }
-        .level-item.locked::after {
-            content: '🔒';
-            font-size: 16px;
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-        }
-        .level-item:not(.locked):hover {
-            background: #FF5722;
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.4);
-        }
 
         /* 标题样式 */
         h1 {
@@ -236,11 +195,6 @@
         <!-- 关卡数 -->
         <div id="levelDisplay" class="text-bg">关卡: <span id="levelNumber">1</span>/8</div>
         
-        <!-- 音频控制 -->
-        <div id="audioControl" class="text-bg" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); cursor: pointer; z-index: 100;">
-            🔊 音乐: 开
-        </div>
-        
         <!-- 大跳提示 -->
         <div id="jumpIndicator" class="text-bg">空格键触发大跳！</div>
 
@@ -249,17 +203,21 @@
             <h1 class="text-bg">2D跳跃跑酷</h1>
             <p class="text-bg-block">角色固定左侧，红旗从最右侧左移，重合即通关！</p>
             
-            <div style="display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%;">
-                <button id="startButton" class="game-btn" style="width: min(80%, 300px); font-size: 24px; padding: 20px;">直接开始</button>
-                <button id="levelSelectButton" class="game-btn" style="width: min(80%, 300px); background: linear-gradient(to bottom, #4CAF50, #388E3C);">关卡选择</button>
-                <button id="rulesButton" class="game-btn" style="width: min(80%, 300px); background: linear-gradient(to bottom, #2196F3, #1976D2);">游戏规则</button>
-            </div>
+            <button id="rulesButton" class="game-btn">查看游戏规则</button>
             
             <div class="obstacle-info">
                 <div class="obstacle-item text-bg"><img src="obs1.png" class="obstacle-img"><span>普通障碍 (-10血)</span></div>
                 <div class="obstacle-item text-bg"><img src="obs2.png" class="obstacle-img"><span>危险障碍 (-20血)</span></div>
                 <div class="obstacle-item text-bg"><img src="obs3.png" class="obstacle-img"><span>致命障碍 (-30血)</span></div>
+                <div class="obstacle-item text-bg" style="margin-left:20px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="red">
+                        <path d="M12 0L14 6H24L16 10L18 16L12 12L6 16L8 10L0 6H10L12 0Z"/>
+                    </svg>
+                    <span>终点红旗（重合即通关）</span>
+                </div>
             </div>
+            
+            <button id="startButton" class="game-btn">开始游戏</button>
         </div>
 
         <!-- 游戏规则界面 -->
@@ -288,18 +246,6 @@
             <button id="backToStartButton" class="game-btn">返回开始界面</button>
         </div>
 
-        <!-- 关卡选择界面 -->
-        <div id="levelSelectScreen" class="screen-overlay">
-            <h2 class="text-bg">关卡选择</h2>
-            <div id="levelGrid" class="level-grid">
-                <!-- 动态生成关卡按钮 -->
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button id="backFromSelectButton" class="game-btn">返回</button>
-                <button id="resetProgressButton" class="game-btn" style="background: #666;">重置进度</button>
-            </div>
-        </div>
-
         <!-- 关卡开始界面 -->
         <div id="levelStartScreen" class="screen-overlay">
             <h2 class="text-bg">第 <span id="currentLevelNum">1</span> 关</h2>
@@ -311,10 +257,7 @@
         <div id="gameOverScreen" class="screen-overlay">
             <h2 class="text-bg">游戏结束!</h2>
             <p class="text-bg-block">你完成了 <span id="finalLevel">0</span> 个关卡</p>
-            <div style="display: flex; gap: 10px;">
-                <button id="restartButton" class="game-btn">重新开始</button>
-                <button id="failToSelectButton" class="game-btn" style="background: #4CAF50;">关卡选择</button>
-            </div>
+            <button id="restartButton" class="game-btn">重新开始</button>
         </div>
 
         <!-- 关卡完成界面 -->
@@ -323,16 +266,12 @@
             <p class="text-bg-block">红旗与角色重合，成功通关本关！</p>
             <p class="text-bg-block">进入第 <span id="nextLevel">2</span> 关</p>
             <p class="text-bg-block">生命值上限提升至 <span id="newMaxHealth">120</span></p>
-            <div style="display: flex; gap: 10px;">
-                <button id="nextLevelButton" class="game-btn">继续</button>
-                <button id="successToSelectButton" class="game-btn" style="background: #4CAF50;">关卡选择</button>
-            </div>
+            <button id="nextLevelButton" class="game-btn">继续</button>
         </div>
     </div>
 
     <!-- 引入拆分后的 JS 文件 -->
     <script src="js/config.js"></script>
-    <script src="js/audio.js"></script>
     <script src="js/state.js"></script>
     <script src="js/logic.js"></script>
     <script src="js/render.js"></script>
