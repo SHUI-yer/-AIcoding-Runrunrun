@@ -39,8 +39,17 @@ const CONFIG = {
         smallJumpGravity: 0.6,
         bigJumpPower: 22,
         bigJumpGravity: 0.4,
-        groundOffset: 0
+        groundOffset: 0,
+        hitboxPadding: { x: 8, y: 5 } // 碰撞体缩进，让判定更公平
     },
     health: { initialMax: 100, increasePerLevel: 20 },
+    audio: {
+        bgmStart: 'https://actions.google.com/sounds/v1/science_fiction/glitchy_digital_opening.ogg', // 示例地址
+        bgmGame: 'https://actions.google.com/sounds/v1/cartoon/clown_horn.ogg', // 示例地址
+        jump: 'https://actions.google.com/sounds/v1/cartoon/pop.ogg',
+        hit: 'https://actions.google.com/sounds/v1/impacts/crash_and_burn.ogg',
+        success: 'https://actions.google.com/sounds/v1/cartoon/conga_line_celebration.ogg',
+        fail: 'https://actions.google.com/sounds/v1/impacts/horror_impact_clash.ogg'
+    },
     fps: 60
 };

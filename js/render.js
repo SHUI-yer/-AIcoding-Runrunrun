@@ -52,11 +52,13 @@ function showLevelStart() {
 function gameStart() {
     gameState = 'playing';
     hideAllScreens();
+    AUDIO.playBGM('bgmGame');
 }
 
 function levelComplete() {
     gameState = 'levelComplete';
     hideAllScreens();
+    AUDIO.play('success');
     DOM.levelCompleteScreen.style.display = 'flex';
     const nextLevel = levelState.currentLevel + 1;
     DOM.nextLevel.textContent = nextLevel > CONFIG.totalLevels ? levelState.currentLevel : nextLevel;
@@ -66,6 +68,7 @@ function levelComplete() {
 function gameOver() {
     gameState = 'gameOver';
     hideAllScreens();
+    AUDIO.play('fail');
     DOM.gameOverScreen.style.display = 'flex';
     DOM.finalLevel.textContent = levelState.currentLevel;
     if (levelState.currentLevel === CONFIG.totalLevels) {
@@ -77,9 +80,30 @@ function gameOver() {
 function hideAllScreens() {
     DOM.startScreen.style.display = 'none';
     DOM.rulesScreen.style.display = 'none';
+    DOM.levelSelectScreen.style.display = 'none';
     DOM.levelStartScreen.style.display = 'none';
     DOM.gameOverScreen.style.display = 'none';
     DOM.levelCompleteScreen.style.display = 'none';
+}
+
+// 渲染关卡选择列表
+function renderLevelGrid() {
+    DOM.levelGrid.innerHTML = '';
+    for (let i = 1; i <= CONFIG.totalLevels; i++) {
+        const levelItem = document.createElement('div');
+        levelItem.className = 'level-item';
+        levelItem.textContent = i;
+        
+        if (i > gameProgress.unlockedLevel) {
+            levelItem.classList.add('locked');
+        } else {
+            levelItem.addEventListener('click', () => {
+                initLevel(i);
+                showLevelStart();
+            });
+        }
+        DOM.levelGrid.appendChild(levelItem);
+    }
 }
 
 // 绘制游戏主画面
@@ -87,6 +111,27 @@ function draw() {
     ctx.clearRect(0, 0, canvasW, canvasH);
     ctx.drawImage(preloadedImages.bg, 0, 0, canvasW, canvasH);
     drawEndFlag();
-    ctx.drawImage(preloadedImages.player, player.x, player.y, player.width, player.height);
+    
+    // 绘制玩家（带简单的跑动/呼吸动画）
+    ctx.save();
+    let bounceY = 0;
+    let rotation = 0;
+    
+    if (gameState === 'playing') {
+        if (player.onGround) {
+            // 地面上跑动：微弱的上下颠簸和倾斜
+            bounceY = Math.sin(player.animTick) * 3;
+            rotation = Math.sin(player.animTick) * 0.05;
+        } else {
+            // 空中：根据垂直速度倾斜
+            rotation = player.velocityY * 0.02;
+        }
+    }
+    
+    ctx.translate(player.x + player.width / 2, player.y + player.height / 2 + bounceY);
+    ctx.rotate(rotation);
+    ctx.drawImage(preloadedImages.player, -player.width / 2, -player.height / 2, player.width, player.height);
+    ctx.restore();
+    
     obstacles.forEach(obs => ctx.drawImage(obs.img, obs.x, obs.y, obs.width, obs.height));
 }

@@ -6,6 +6,8 @@ const DOM = {
     levelStartScreen: document.getElementById('levelStartScreen'),
     gameOverScreen: document.getElementById('gameOverScreen'),
     levelCompleteScreen: document.getElementById('levelCompleteScreen'),
+    levelSelectScreen: document.getElementById('levelSelectScreen'),
+    levelGrid: document.getElementById('levelGrid'),
     healthValue: document.getElementById('healthValue'),
     healthBar: document.getElementById('healthBar'),
     levelNumber: document.getElementById('levelNumber'),
@@ -17,10 +19,16 @@ const DOM = {
     levelDescription: document.getElementById('levelDescription'),
     startButton: document.getElementById('startButton'),
     rulesButton: document.getElementById('rulesButton'),
+    levelSelectButton: document.getElementById('levelSelectButton'),
     backToStartButton: document.getElementById('backToStartButton'),
+    backFromSelectButton: document.getElementById('backFromSelectButton'),
+    resetProgressButton: document.getElementById('resetProgressButton'),
     restartButton: document.getElementById('restartButton'),
     nextLevelButton: document.getElementById('nextLevelButton'),
-    gameContainer: document.getElementById('gameContainer')
+    failToSelectButton: document.getElementById('failToSelectButton'),
+    successToSelectButton: document.getElementById('successToSelectButton'),
+    gameContainer: document.getElementById('gameContainer'),
+    audioControl: document.getElementById('audioControl')
 };
 
 // 画布初始化
@@ -42,6 +50,24 @@ let levelState = {
 };
 let timeAccumulator = 0;
 const frameTime = 1000 / CONFIG.fps;
+
+// 进度管理
+const PROGRESS_KEY = 'runrunrun_progress';
+let gameProgress = {
+    unlockedLevel: 1,
+    maxHealthRecord: CONFIG.health.initialMax
+};
+
+function saveProgress() {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(gameProgress));
+}
+
+function loadProgress() {
+    const saved = localStorage.getItem(PROGRESS_KEY);
+    if (saved) {
+        gameProgress = JSON.parse(saved);
+    }
+}
 
 // 图片预加载
 const preloadedImages = {

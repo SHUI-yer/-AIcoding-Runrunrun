@@ -8,7 +8,8 @@ function initPlayer() {
         velocityY: 0,
         onGround: true,
         groundY: CONFIG.background.groundY - CONFIG.player.height,
-        jumpType: 'none'
+        jumpType: 'none',
+        animTick: 0 // 用于简单的动画效果
     };
 }
 
@@ -50,6 +51,9 @@ function initLevel(level = 1) {
 // 更新玩家状态
 function updatePlayer() {
     if (gameState !== 'playing') return;
+    
+    player.animTick += 0.15; // 跑动动画速度
+    
     let currentGravity = 0;
     if (player.jumpType === 'small') currentGravity = CONFIG.player.smallJumpGravity;
     else if (player.jumpType === 'big') currentGravity = CONFIG.player.bigJumpGravity;
@@ -71,6 +75,7 @@ function smallJump() {
     player.velocityY = -CONFIG.player.smallJumpPower;
     player.onGround = false;
     player.jumpType = 'small';
+    AUDIO.play('jump');
 }
 
 // 大跳逻辑
@@ -79,6 +84,7 @@ function bigJump() {
     player.velocityY = -CONFIG.player.bigJumpPower;
     player.onGround = false;
     player.jumpType = 'big';
+    AUDIO.play('jump');
     DOM.jumpIndicator.style.display = 'block';
     setTimeout(() => DOM.jumpIndicator.style.display = 'none', 1000);
 }
@@ -106,11 +112,21 @@ function updateEndFlag(deltaTime) {
     
     const tolerance = 8;
     if (endFlag.x >= CONFIG.player.x - tolerance && endFlag.x <= CONFIG.player.x + tolerance) {
+        // 解锁下一关
+        if (levelState.currentLevel < CONFIG.totalLevels) {
+            gameProgress.unlockedLevel = Math.max(gameProgress.unlockedLevel, levelState.currentLevel + 1);
+        }
+        saveProgress();
         levelComplete();
         endFlag.isExist = false;
     }
     
     if (endFlag.x < 0) {
+        // 解锁下一关
+        if (levelState.currentLevel < CONFIG.totalLevels) {
+            gameProgress.unlockedLevel = Math.max(gameProgress.unlockedLevel, levelState.currentLevel + 1);
+        }
+        saveProgress();
         levelComplete();
         endFlag.isExist = false;
     }
@@ -195,16 +211,23 @@ function updateObstacles() {
 // 碰撞检测
 function checkObstacleCollision() {
     if (gameState !== 'playing') return;
+    
+    const pPaddingX = CONFIG.player.hitboxPadding.x;
+    const pPaddingY = CONFIG.player.hitboxPadding.y;
+    
     for (let i = 0; i < obstacles.length; i++) {
         const obs = obstacles[i];
+        
+        // 使用更精细的碰撞体检测
         if (
-            player.x + player.width > obs.x + 5 &&
-            player.x < obs.x + obs.width - 5 &&
-            player.y + player.height > obs.y + 5 &&
-            player.y < obs.y + obs.height - 5
+            player.x + pPaddingX < obs.x + obs.width - 5 &&
+            player.x + player.width - pPaddingX > obs.x + 5 &&
+            player.y + pPaddingY < obs.y + obs.height - 5 &&
+            player.y + player.height - pPaddingY > obs.y + 5
         ) {
             levelState.currentHealth = Math.max(0, levelState.currentHealth - obs.damage);
             updateHealthUI();
+            AUDIO.play('hit');
             obstacles.splice(i, 1);
             i--;
             if (levelState.currentHealth <= 0) gameOver();
